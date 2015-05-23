@@ -128,7 +128,7 @@ public class Engine
 			ArrayList<Integer> flips = t.getFlips();
 			flipPieces(flips, player, this.matrix, true);
 			if(/*player == this.mComputer &&*/ flips.size() > 0){
-				Blinker blink = new Blinker(this.mGUI, this, x, y, flips, opponent);
+				Blinker blink = new Blinker(this.mGUI, this, x, y, flips, player);
 			}
 			isValid = true;
 		}
@@ -140,32 +140,28 @@ public class Engine
 		if(this.blinkingIsFinished == true) {
 			if (humanPlayers == 1) {
 				boolean moveMade = this.performMove(x, y, this.mPlayer, this.mComputer);
-				this.updateStatusPanel();
+				/*this.updateStatusPanel();
 				if ((moveMade == true || this.mPlayerMoves <= 0) && this.gameInProgress == true) {
 					if (this.mComputerMoves > 0) {
 						this.performBlackMove();    // Computer's turn immediately follows human player.
 					} else {
 						this.mGUI.displayMessageWindow("Computer Has No Moves", "The computer has no moves to take.\n\nPlease take another turn.");
 					}
-				}
+				}*/
+
 			} else if (humanPlayers == 0) {
 				Move toDo = findBestMove(this.mPlayer, this.mComputer);
 
 				boolean moveMade = this.performMove(toDo.X(), toDo.Y(), this.mPlayer, this.mComputer);
-				this.updateStatusPanel();
+				/*this.updateStatusPanel();
 				if ((moveMade == true || this.mPlayerMoves <= 0) && this.gameInProgress == true) {
 					if (this.mComputerMoves > 0) {
 						this.performBlackMove();    // Computer's turn immediately follows human player.
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
 					} else {
 						//this.mGUI.displayMessageWindow("Computer Has No Moves", "The computer has no moves to take.\n\nPlease take another turn.");
 						this.performWhiteMove(0, 0);
 					}
-				}
+				}*/
 			}
 		}
 		return;
@@ -173,13 +169,13 @@ public class Engine
 	
 	public void performBlackMove()///////////////////////////////////////////////////////////////
 	{
-		//if(this.blinkingIsFinished == true) {
+		if(this.blinkingIsFinished == true) {
 			Move bestMove = findBestMove(this.mComputer, this.mPlayer);
 			this.performMove(bestMove.X(), bestMove.Y(), this.mComputer, this.mPlayer);
-			if (humanPlayers == 0) {
+			/*if (humanPlayers == 0) {
 				performWhiteMove(0, 0);
-			}
-		//}
+			}*/
+		}
 		return;
 	}
 
@@ -202,15 +198,30 @@ public class Engine
 		return bestMove;
 	}
 
-	public synchronized void postCheckComputerMove()
+	public synchronized void postCheckMove(SquareState player)
 	{
 		this.updateStatusPanel();
-		if(this.mPlayerMoves <= 0 && this.mComputerMoves > 0){
-			// Computer gets to go again.
-			if(humanPlayers == 1 ) {
-				this.mGUI.displayMessageWindow("You Have No Moves", "You have no moves at the moment.\n\nThe computer will take another turn.");
+		if(player == SquareState.BLACK) {
+			if (this.mPlayerMoves <= 0 && this.mComputerMoves > 0) {
+				// Computer gets to go again.
+				if (humanPlayers == 1) {
+					this.mGUI.displayMessageWindow("You Have No Moves", "You have no moves at the moment.\n\nThe computer will take another turn.");
+				}
+				this.performBlackMove();
+			} else {
+				this.performWhiteMove(0,0);
 			}
-			this.performBlackMove();
+		} else if(player == SquareState.WHITE){
+			if (this.mPlayerMoves > 0 && this.mComputerMoves <= 0) {
+				// Computer gets to go again.
+				if (humanPlayers == 1) {
+					this.mGUI.displayMessageWindow("Computer Has No Moves", "The computer has no moves to take.\n\nPlease take another turn.");
+				} else {
+					this.performWhiteMove(0,0);
+				}
+			} else {
+				this.performBlackMove();
+			}
 		}
 		return;
 	}
