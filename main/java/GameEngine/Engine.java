@@ -1,4 +1,5 @@
 package GameEngine;
+import AI.Evaluator;
 import UI.*;
 import Utils.Globals;
 import Utils.SquareState;
@@ -182,19 +183,23 @@ public class Engine
 
 	private Move findBestMove(SquareState attack, SquareState defense){
 		Move bestMove = new Move();
+		Evaluator eval = new Evaluator();
+		int highest = -100;
 		ArrayList<Move> moves = this.findAllPossibleMoves(attack, defense, this.matrix);
 		if(moves.size() > 0){
 			for(Move aMove : moves)
 			{
+				/*
+				int temp = eval.evaluate(aMove);
 				//where magic happens TODO
-				if(aMove.opponentPieces() > bestMove.opponentPieces()){
+				if(highest < temp){
 					bestMove = new Move(aMove);
-				}
+					highest = temp;
+				}*/
+				bestMove = new Move(aMove);
 			}
-//			this.performMove(bestMove.X(), bestMove.Y(), this.mComputer, this.mPlayer);
 		}
 
-		//this.performMove(bestMove.X(), bestMove.Y(), this.mComputer, this.mPlayer);
 		return bestMove;
 	}
 
@@ -203,17 +208,17 @@ public class Engine
 		this.updateStatusPanel();
 		if(player == SquareState.BLACK) {
 			if (this.mPlayerMoves <= 0 && this.mComputerMoves > 0) {
-				// Computer gets to go again.
+				// Black gets to go again.
 				if (humanPlayers == 1) {
 					this.mGUI.displayMessageWindow("You Have No Moves", "You have no moves at the moment.\n\nThe computer will take another turn.");
 				}
 				this.performBlackMove();
-			} else {
+			} else if(humanPlayers == 1){
 				this.performWhiteMove(0,0);
 			}
 		} else if(player == SquareState.WHITE){
 			if (this.mPlayerMoves > 0 && this.mComputerMoves <= 0) {
-				// Computer gets to go again.
+				// White gets to go again.
 				if (humanPlayers == 1) {
 					this.mGUI.displayMessageWindow("Computer Has No Moves", "The computer has no moves to take.\n\nPlease take another turn.");
 				} else {
