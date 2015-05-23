@@ -21,7 +21,8 @@ public class MainGUI implements WindowListener, MouseListener, MouseMotionListen
 	private JPanel mStatusPanel = null;
 	private GridPanel mGridPanel = null;
 	private ArrayList<GridSquare> mSquares = null;
-	private JButton cmdNew = null;
+	private JButton cmd1pNew = null;
+	private JButton cmd0pNew = null;
 	static final private String NEW_GAME_BUTTON = "Start New Game";
 	private JLabel lblPlayerMoves = null;
 	private JLabel lblComputerMoves = null;
@@ -96,12 +97,18 @@ public class MainGUI implements WindowListener, MouseListener, MouseMotionListen
 		Dimension textSize = this.getTextSize("This is only a test", theFont);
 		this.mControlPanel.setPreferredSize(new Dimension(600, 30));
 		this.mControlPanel.setMinimumSize(new Dimension(textSize.width + 10, textSize.height + 5));
-		this.cmdNew = new JButton("New Game");
-		this.cmdNew.setMinimumSize(new Dimension(textSize.width + 20, textSize.height + 10));
-		this.cmdNew.setActionCommand(NEW_GAME_BUTTON);
-		this.cmdNew.setToolTipText(NEW_GAME_BUTTON);
-		this.cmdNew.addActionListener(this);
-		this.mControlPanel.add(this.cmdNew);
+		this.cmd1pNew = new JButton("vs Human");
+		this.cmd0pNew = new JButton("vs Comp");
+		this.cmd1pNew.setMinimumSize(new Dimension(textSize.width + 20, textSize.height + 10));
+		this.cmd1pNew.setActionCommand(NEW_GAME_BUTTON);
+		this.cmd1pNew.setToolTipText(NEW_GAME_BUTTON);
+		this.cmd1pNew.addActionListener(this);
+		this.mControlPanel.add(this.cmd1pNew);
+		this.cmd0pNew.setMinimumSize(new Dimension(textSize.width + 20, textSize.height + 10));
+		this.cmd0pNew.setActionCommand(NEW_GAME_BUTTON);
+		this.cmd0pNew.setToolTipText(NEW_GAME_BUTTON);
+		this.cmd0pNew.addActionListener(this);
+		this.mControlPanel.add(this.cmd0pNew);
 		
 		this.mControlPanel.add(Box.createRigidArea(new Dimension(3000, 16)));
 		
@@ -274,8 +281,11 @@ public class MainGUI implements WindowListener, MouseListener, MouseMotionListen
 	
 	public void actionPerformed(ActionEvent source)
 	{
-		if (source.getSource()==(JButton) cmdNew){
-			this.mEngine.resetGame();
+		if (source.getSource()==(JButton) cmd1pNew){
+			this.mEngine.resetGame(1);
+			this.mGridPanel.repaint();
+		} else if (source.getSource()==(JButton) cmd0pNew) {
+			this.mEngine.resetGame(0);
 			this.mGridPanel.repaint();
 		}
 		return;
@@ -296,7 +306,7 @@ public class MainGUI implements WindowListener, MouseListener, MouseMotionListen
 			GridSquare aPiece = this.mSquares.get(i);
 			if(this.mMousePosition.x >= aPiece.getX() && this.mMousePosition.x <= aPiece.getX() + width){
 				if(this.mMousePosition.y >= aPiece.getY() && this.mMousePosition.y <= aPiece.getY() + width){
-					this.mEngine.performPlayerMove(GridMath.getX(i), GridMath.getY(i));
+					this.mEngine.performWhiteMove(GridMath.getX(i), GridMath.getY(i));
 					//aPiece.switchImage("white"); // just for testing.
 					break;
 				}
