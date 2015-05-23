@@ -131,11 +131,11 @@ public class Blinker //implements Runnable
 			}
 			mFlashCount++;
 			int blinks = Globals.COMPUTER_MOVE_BLINKS * 2; // Alternate the images this many times.
-			System.out.println(this + "runs");
+			//System.out.println(this + " runs");
 			if(mFlashCount >= blinks){
 				this.cancel();
 				mEngine.setBlinkingFinished(true);
-				System.out.println(this + " stopped");
+				//System.out.println(this + " stopped");
 
 				mEngine.postCheckMove(mOpponent);
 			}

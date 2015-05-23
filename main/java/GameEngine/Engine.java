@@ -130,7 +130,13 @@ public class Engine
 			flipPieces(flips, player, this.matrix, true);
 			if(/*player == this.mComputer &&*/ flips.size() > 0){
 				Blinker blink = new Blinker(this.mGUI, this, x, y, flips, player);
+				/*try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}*/
 			}
+
 			isValid = true;
 		}
 		return isValid;
@@ -164,6 +170,7 @@ public class Engine
 					}
 				}*/
 			}
+			//postCheckMove(SquareState.WHITE);
 		}
 		return;
 	}
@@ -173,6 +180,8 @@ public class Engine
 		if(this.blinkingIsFinished == true) {
 			Move bestMove = findBestMove(this.mComputer, this.mPlayer);
 			this.performMove(bestMove.X(), bestMove.Y(), this.mComputer, this.mPlayer);
+			//postCheckMove(SquareState.BLACK);
+
 			/*if (humanPlayers == 0) {
 				performWhiteMove(0, 0);
 			}*/
@@ -189,17 +198,16 @@ public class Engine
 		if(moves.size() > 0){
 			for(Move aMove : moves)
 			{
-				/*
 				int temp = eval.evaluate(aMove);
 				//where magic happens TODO
 				if(highest < temp){
 					bestMove = new Move(aMove);
 					highest = temp;
-				}*/
-				bestMove = new Move(aMove);
+				}
 			}
 		}
-
+		String pl = attack == SquareState.WHITE ? "white" : "black";
+		System.out.println(pl + " (" + bestMove.X() + ", " + bestMove.Y() + "), flipped: " + bestMove.opponentPieces() + ", eval: " + highest);
 		return bestMove;
 	}
 
@@ -213,7 +221,7 @@ public class Engine
 					this.mGUI.displayMessageWindow("You Have No Moves", "You have no moves at the moment.\n\nThe computer will take another turn.");
 				}
 				this.performBlackMove();
-			} else if(humanPlayers == 1){
+			} else if(humanPlayers == 0){
 				this.performWhiteMove(0,0);
 			}
 		} else if(player == SquareState.WHITE){

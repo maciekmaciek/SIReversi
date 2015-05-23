@@ -29,20 +29,20 @@ public class Evaluator {
         vertices[3] = new Point(7,7);
 
         nearVertices[0] = new Point(0, 1);
-        nearVertices[0] = new Point(1, 1);
-        nearVertices[0] = new Point(1, 0);
+        nearVertices[1] = new Point(1, 1);
+        nearVertices[2] = new Point(1, 0);
 
-        nearVertices[0] = new Point(0, 6);
-        nearVertices[0] = new Point(1, 6);
-        nearVertices[0] = new Point(1, 7);
+        nearVertices[3] = new Point(0, 6);
+        nearVertices[4] = new Point(1, 6);
+        nearVertices[5] = new Point(1, 7);
 
-        nearVertices[0] = new Point(6, 0);
-        nearVertices[0] = new Point(6, 1);
-        nearVertices[0] = new Point(7, 1);
+        nearVertices[6] = new Point(6, 0);
+        nearVertices[7] = new Point(6, 1);
+        nearVertices[8] = new Point(7, 1);
 
-        nearVertices[0] = new Point(7, 6);
-        nearVertices[0] = new Point(6, 6);
-        nearVertices[0] = new Point(6, 7);
+        nearVertices[9] = new Point(7, 6);
+        nearVertices[10] = new Point(6, 6);
+        nearVertices[11] = new Point(6, 7);
     }
 
     public int evaluate(Move move){
