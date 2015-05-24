@@ -1,5 +1,6 @@
 package GameEngine;
 import AI.Evaluator;
+import AI.MinMaxStrategy;
 import UI.*;
 import Utils.Globals;
 import Utils.SquareState;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Random;
 public class Engine
 {
+	MinMaxStrategy whiteStrategy;
+	MinMaxStrategy blackStrategy;
 	private final SquareState mPlayer = SquareState.WHITE;
 	private final SquareState mComputer = SquareState.BLACK;
 	private int humanPlayers;
@@ -38,7 +41,10 @@ public class Engine
 		for(int i = 0; i < Globals.GRID_SIZE_INTEGER; i++)
 			for(int j = 0; j < Globals.GRID_SIZE_INTEGER; j++)
 				this.matrix[j][i] = SquareState.NONE;
-		
+
+		whiteStrategy = new MinMaxStrategy(this, SquareState.WHITE, SquareState.BLACK, this.matrix);
+		blackStrategy = new MinMaxStrategy(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
+
 		return;
 	}
 	
@@ -191,23 +197,14 @@ public class Engine
 
 
 	private Move findBestMove(SquareState attack, SquareState defense){
-		Move bestMove = new Move();
-		Evaluator eval = new Evaluator();
-		int highest = -100;
-		ArrayList<Move> moves = this.findAllPossibleMoves(attack, defense, this.matrix);
-		if(moves.size() > 0){
-			for(Move aMove : moves)
-			{
-				int temp = eval.evaluate(aMove);
-				//where magic happens TODO
-				if(highest < temp){
-					bestMove = new Move(aMove);
-					highest = temp;
-				}
-			}
+		Move bestMove;
+		if(attack == SquareState.BLACK) {
+			bestMove = blackStrategy.findBestMove();
+		} else {
+			bestMove = whiteStrategy.findBestMove();
 		}
 		String pl = attack == SquareState.WHITE ? "white" : "black";
-		System.out.println(pl + " (" + bestMove.X() + ", " + bestMove.Y() + "), flipped: " + bestMove.opponentPieces() + ", eval: " + highest);
+		System.out.println(pl + " (" + bestMove.X() + ", " + bestMove.Y() + "), flipped: " + bestMove.opponentPieces() + ", eval: " + bestMove.getBestScore());
 		return bestMove;
 	}
 
@@ -245,7 +242,7 @@ public class Engine
 	 * @param opponent - not the current player.
 	 * @return - ArrayList of type, Move.
 	 */
-	private ArrayList<Move> findAllPossibleMoves(final SquareState player, final SquareState opponent, final SquareState[][] aMatrix)
+	public ArrayList<Move> findAllPossibleMoves(final SquareState player, final SquareState opponent, final SquareState[][] aMatrix)
 	{
 		// Traverse the full grid for specified player pieces.
 		ArrayList<Move> allPossibleMoves = new ArrayList<Move>();
@@ -277,7 +274,7 @@ public class Engine
 	/**
 	 * flipPieces reverses opponent pieces one a player piece has been set.
 	 */
-	private void flipPieces(final ArrayList<Integer> flips, final SquareState player, final SquareState[][] aMatrix, final boolean isActualMove)
+	public void flipPieces(final ArrayList<Integer> flips, final SquareState player, final SquareState[][] aMatrix, final boolean isActualMove)
 	{
 		if(flips.size() > 0){
 			for(int flip : flips)

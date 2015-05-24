@@ -5,7 +5,16 @@ public class Move
 	private int mY = 0;
 	private int mOpponentPieces = 0;
 	private int mBestScore = 0;
-	
+	private Move bestMaxChild;
+
+	public Move getBestMaxChild() {
+		return bestMaxChild;
+	}
+
+	public void setBestMaxChild(Move bestMaxChild) {
+		this.bestMaxChild = bestMaxChild;
+	}
+
 	public Move(){
 	}
 	
