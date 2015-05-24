@@ -264,24 +264,18 @@ public class MainGUI implements WindowListener, MouseListener, MouseMotionListen
     }
 
     public void actionPerformed(ActionEvent source) {
-        try {
 
             if (source.getSource() == (JButton) cmd1pNew) {
                 this.mEngine.resetGame(1);
                 this.mGridPanel.repaint();
-                Thread.sleep(2000);
-                this.mEngine.resetGame(1); //taka sztuczka
-                this.mGridPanel.repaint();
+
             } else if (source.getSource() == (JButton) cmd0pNew) {
                 this.mEngine.resetGame(0);
                 this.mGridPanel.repaint();
-                Thread.sleep(2000);
-                this.mEngine.resetGame(0); //taka sztuczka
-                this.mGridPanel.repaint();
+
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+                cmd1pNew.setEnabled(false);
+                cmd0pNew.setEnabled(false);
         return;
     }
 

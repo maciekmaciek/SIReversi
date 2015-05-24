@@ -14,8 +14,8 @@ import java.util.Comparator;
  * maciekwski@gmail.com
  * on 2015-05-18.
  */
-public class AlphaBetaStrategy implements Strategy, Comparator<Move> {
-    private static final int THEDEPTH = 4;
+public class AlphaBetaStrategy2 implements Strategy, Comparator<Move> {
+    private static final int THEDEPTH = 8;
     private int currentDepth;
     private SquareState owner;
     private SquareState opponent;
@@ -24,7 +24,7 @@ public class AlphaBetaStrategy implements Strategy, Comparator<Move> {
     Engine engine;
     Evaluator evaluator;
 
-    public AlphaBetaStrategy(Engine engine, SquareState owner, SquareState opponent, SquareState[][] currentMatrix) {
+    public AlphaBetaStrategy2(Engine engine, SquareState owner, SquareState opponent, SquareState[][] currentMatrix) {
         this.owner = owner;
         this.opponent = opponent;
         this.currentMatrix = currentMatrix;
@@ -67,7 +67,7 @@ public class AlphaBetaStrategy implements Strategy, Comparator<Move> {
 
         String type = depth % 2 == 1 ? "Minimizer" : "Maximizer";
         if (depth == THEDEPTH) {
-            move.setBestScore(evalValue + move.getBestScore());                                                //w górê
+            move.setBestScore(evalValue);                                                //w górê
             currentDepth--;
             //System.out.println(type + " " + depth + ",  val: " + move.getBestScore());
             return move;
@@ -85,8 +85,7 @@ public class AlphaBetaStrategy implements Strategy, Comparator<Move> {
                 if (depth % 2 == 0) {
                     value = Integer.MIN_VALUE;                                                                  //maximizer, maksymalizuj
                     for (Move aMove : moves) {
-                        aMove.setBestScore(evalValue + aMove.getBestScore());                                   //proapguj evalValue w dó³
-                        int temp = findBestMove(aMove, depth + 1, tempMatrix, player2, player1, alpha, beta).getBestScore();
+                        int temp = evalValue + findBestMove(aMove, depth + 1, tempMatrix, player2, player1, alpha, beta).getBestScore();
                         if (value < temp) {
                             value = temp;
                             move.setBestScore(value);
@@ -101,8 +100,7 @@ public class AlphaBetaStrategy implements Strategy, Comparator<Move> {
                 } else { //minimizer - minimalizuj
                     value = Integer.MAX_VALUE;
                     for (Move aMove : moves) {
-                        aMove.setBestScore(evalValue + aMove.getBestScore());                                   //proapguj evalValue w dó³
-                        int temp = findBestMove(aMove, depth + 1, tempMatrix, player2, player1, alpha, beta).getBestScore();
+                        int temp = evalValue + findBestMove(aMove, depth + 1, tempMatrix, player2, player1, alpha, beta).getBestScore();
                         if (value > temp) {
                             value = temp;
                             move.setBestScore(value);

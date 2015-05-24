@@ -1,5 +1,8 @@
 package GameEngine;
-public class Move
+
+import AI.Evaluator;
+
+public class Move implements Comparable<Move>
 {
 	private int mX = 0;
 	private int mY = 0;
@@ -97,6 +100,17 @@ public class Move
 	{
 		this.mBestScore = score;
 		return;
+	}
+
+	@Override
+	public int compareTo(Move o) {
+		Evaluator e = new Evaluator();
+		if(e.evaluate(this) > e.evaluate(o))
+			return 1;
+		else if(e.evaluate(this) > e.evaluate(o))
+			return 0;
+		else
+			return -1;
 	}
 }
 

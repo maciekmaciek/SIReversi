@@ -1,6 +1,5 @@
 package GameEngine;
-import AI.Evaluator;
-import AI.MinMaxStrategy;
+import AI.*;
 import UI.*;
 import Utils.Globals;
 import Utils.SquareState;
@@ -9,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Random;
 public class Engine
 {
-	MinMaxStrategy whiteStrategy;
-	MinMaxStrategy blackStrategy;
+	Strategy whiteStrategy;
+	Strategy blackStrategy;
 	private final SquareState mPlayer = SquareState.WHITE;
 	private final SquareState mComputer = SquareState.BLACK;
 	private int humanPlayers;
@@ -43,13 +42,19 @@ public class Engine
 				this.matrix[j][i] = SquareState.NONE;
 
 		whiteStrategy = new MinMaxStrategy(this, SquareState.WHITE, SquareState.BLACK, this.matrix);
-		blackStrategy = new MinMaxStrategy(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
+		//blackStrategy = new MinMaxStrategy2(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
+		//blackStrategy = new MinMaxStrategy(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
+		//whiteStrategy = new AlphaBetaStrategy(this, SquareState.WHITE, SquareState.BLACK, this.matrix);
+		//whiteStrategy = new AlphaBetaStrategy(this, SquareState.WHITE, SquareState.BLACK, this.matrix);
+		blackStrategy = new AlphaBetaStrategy2(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
+		//blackStrategy = new AlphaBetaStrategy(this, SquareState.BLACK, SquareState.WHITE, this.matrix);
 
 		return;
 	}
 	
 	public void resetGame(int humanPlayers)
 	{
+		System.out.println();
 		this.humanPlayers = humanPlayers;
 		this.mGUI.setAllowResizeFlag(false);
 		
@@ -68,6 +73,11 @@ public class Engine
 		this.updateStatusPanel();
 		this.gameInProgress = true;
 		this.mGUI.setAllowResizeFlag(true);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if(humanPlayers == 0){
 			performWhiteMove(0, 0);
 		}
@@ -164,8 +174,9 @@ public class Engine
 
 			} else if (humanPlayers == 0) {
 				Move toDo = findBestMove(this.mPlayer, this.mComputer);
-
-				boolean moveMade = this.performMove(toDo.X(), toDo.Y(), this.mPlayer, this.mComputer);
+				if(gameInProgress){
+					boolean moveMade = this.performMove(toDo.X(), toDo.Y(), this.mPlayer, this.mComputer);
+				}
 				/*this.updateStatusPanel();
 				if ((moveMade == true || this.mPlayerMoves <= 0) && this.gameInProgress == true) {
 					if (this.mComputerMoves > 0) {
@@ -183,7 +194,7 @@ public class Engine
 	
 	public void performBlackMove()///////////////////////////////////////////////////////////////
 	{
-		if(this.blinkingIsFinished == true) {
+		if(this.blinkingIsFinished == true && gameInProgress) {
 			Move bestMove = findBestMove(this.mComputer, this.mPlayer);
 			this.performMove(bestMove.X(), bestMove.Y(), this.mComputer, this.mPlayer);
 			//postCheckMove(SquareState.BLACK);

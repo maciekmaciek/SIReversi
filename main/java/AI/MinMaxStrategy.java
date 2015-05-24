@@ -7,14 +7,16 @@ import Utils.Globals;
 import Utils.SquareState;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by Maciej Wolañski
  * maciekwski@gmail.com
  * on 2015-05-18.
  */
-public class MinMaxStrategy implements Strategy {
-    private static final int THEDEPTH = 6;
+public class MinMaxStrategy implements Strategy, Comparator<Move> {
+    private static final int THEDEPTH = 2;
+    private int currentDepth;
     private SquareState owner;
     private SquareState opponent;
     private SquareState[][] currentMatrix;
@@ -30,10 +32,11 @@ public class MinMaxStrategy implements Strategy {
     }
     @Override
     public Move findBestMove() {
-        int currentDepth = 0;
+        currentDepth = 0;
         Move bestMove = new Move();
         int highest = -1000;
         ArrayList<Move> moves = engine.findAllPossibleMoves(owner, opponent, currentMatrix);
+        moves.sort(this.reversed());    //HEURYSTYKA 1 i 2 -> SORTUJ PO WARTOSCI I BIERZ NAJLEPSZY POPRZENIO
         if(moves.size() > 0){
             for(Move aMove : moves)
             {
@@ -54,11 +57,13 @@ public class MinMaxStrategy implements Strategy {
     }
 
     public Move findBestMove(Move move, int depth, SquareState[][] currentMatrix, SquareState player1, SquareState player2){
+        currentDepth = depth;
         int value = depth%2 == 1 ? evaluator.evaluate(move): -evaluator.evaluate(move);  //na minimizerze eval ruchu maxymizera -> dodawanie
         String type = depth%2 == 1 ? "Minimizer" : "Maximizer";
         if(depth == THEDEPTH){
             move.setBestScore(value);
-            System.out.println(type + " " + depth + ",  val: " + move.getBestScore());
+            currentDepth--;
+            //System.out.println(type + " " + depth + ",  val: " + move.getBestScore());
             return move;
         } else {
             SquareState[][] tempMatrix = new SquareState[Globals.GRID_SIZE_INTEGER][Globals.GRID_SIZE_INTEGER]; //kopiuj planszê
@@ -76,6 +81,8 @@ public class MinMaxStrategy implements Strategy {
             int highest = -1000;
             int lowest = 1000;
             moves = engine.findAllPossibleMoves(player1, player2, tempMatrix);
+            moves.sort(this.reversed());    //HEURYSTYKA 1 i 2 -> SORTUJ PO WARTOSCI I BIERZ NAJLEPSZY POPRZENIO
+
             if (moves.size() > 0) {
                 if (depth % 2 == 1) { //minimizer - minimalizuj
                     for (Move aMove : moves) {
@@ -98,8 +105,24 @@ public class MinMaxStrategy implements Strategy {
                     }
                 }
             }
-            System.out.println(type + " " + depth + ",  val: " + move.getBestScore());
+            //System.out.println(type + " " + depth + ",  val: " + move.getBestScore());
+            currentDepth--;
             return move;
         }
+    }
+
+    @Override
+    public int compare(Move o1, Move o2) {
+        if(currentDepth == 0) {
+            if (previousBestMove == null) {//najlepszy z poprzedniego
+                return o1.compareTo(o2);
+            } else {
+                if (o1.X() == previousBestMove.X() && o1.Y() == previousBestMove.Y())
+                    return 1;
+                else if (o2.X() == previousBestMove.X() && o2.Y() == previousBestMove.Y())
+                    return -1;
+            }
+        }
+        return o1.compareTo(o2); //porównaj eval
     }
 }
